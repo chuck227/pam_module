@@ -1,6 +1,7 @@
 #include <security/pam_modules.h>
 #include <ctype.h>
 #include <math.h>
+#include <stddef.h>
 
 #include "pam_password_verifier.h"
 
@@ -73,46 +74,30 @@ int char_to_keyboard_value(char var){
 	for(i=0;i<4;i++){
 		for(j=0;j<13;j++){
 			if(MAPPING[i][j] == var)
-				return pow(10, i) + j;
+				return pow(10, ( i + 1 )) + pow(10, i) * j;
 		}
 	}
 	return -1;
+}
 
+int passes_run_check(char* password, int max_in_row_allowed){
+	int i = 0, prev_value = char_to_keyboard_value(*password), cur_count = 0, cur_value;
 
-	/*switch(var){
-		case '=' || '+':
-			char_value+=1;
-		case '-' || '_':
-			char_value+=1;
-		case '0' || ')':
-			char_value+=1;
-		case '9' || '(':
-			char_value+=1;
+	while( *(password+i) != 0x00){
+		cur_value = char_to_keyboard_value(*( password+i ));
+		if( 
+			cur_value == prev_value || cur_value - prev_value == 1 || cur_value - prev_value == -1 ||
+			( cur_value * 10 ) == prev_value || ( cur_value * 10 ) - prev_value == 1 || ( cur_value * 10 ) - prev_value == -1 ||
+			( cur_value / 10 ) == prev_value || ( cur_value / 10 ) - prev_value == 1 || ( cur_value / 10 ) - prev_value == -1
+		){ // Do check for adjacency here
+			if( ++cur_count > max_in_row_allowed )
+				return 0;
+		}
+		else
+			cur_count = 0;
 
-		case '1' || '!':
-			char_value+=1;
-			break
+		i++;
+	}
 
-		case 'p':
-			char_value+=1;
-		case 'o': 
-			char_value+=1;
-		case 'i':
-			char_value+=1;
-		case 'u':
-			char_value+=1;
-		case 'y':
-			char_value+=1;
-		case 't':
-			char_value+=1;
-		case 'r':
-			char_value+=1;
-		case 'e':
-			char_value+=1;
-		case 'w':
-			char_value+=1;
-		case 'q':
-			char_value+=101;
-			break;
-	}*/
+	return 1;
 }

@@ -6,3 +6,4 @@ const char MAPPING[4][13] = {
 			    };
 
 int char_to_keyboard_value(char var);
+int passes_run_check(char* password, int max_in_row_allowed);
