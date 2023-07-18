@@ -1,9 +1,11 @@
 #include <security/pam_modules.h>
 #include <ctype.h>
+#include <math.h>
 
 #include "pam_password_verifier.h"
 
 int char_to_keyboard_value(char var){
+	int i, j;
 	switch(var){
 		case '!': 
 			var='1';
@@ -23,7 +25,58 @@ int char_to_keyboard_value(char var){
 		case '^':
 			var='6';
 			break;
+		case '&':
+			var='7';
+			break;
+		case '*':
+			var='8';
+			break;
+		case '(':
+			var='9';
+			break;
+		case ')':
+			var='0';
+			break;
+		case '-':
+			var='_';
+			break;
+		case '=':
+			var='+';
+			break;
+		case '{':
+			var='[';
+			break;
+		case '}':
+			var=']';
+			break;
+		case '|':
+			var='\\';
+			break;
+		case ':':
+			var=';';
+			break;
+		case '"':
+			var='\'';
+			break;
+		case '<':
+			var=',';
+			break;
+		case '>':
+			var='.';
+			break;
+		case '?':
+			var='/';
+			break;
+		default:
+			var = tolower(var);
 	}
+	for(i=0;i<4;i++){
+		for(j=0;j<13;j++){
+			if(MAPPING[i][j] == var)
+				return pow(10, i) + j;
+		}
+	}
+	return -1;
 
 
 	/*switch(var){
