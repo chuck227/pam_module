@@ -1,5 +1,8 @@
 all: library test
 
+run: library test
+	./test
+
 test: library
 	gcc -o test test.c -Wall -L -l ./pam_password_verifier.so 
 
